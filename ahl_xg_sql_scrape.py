@@ -1,5 +1,5 @@
 """
-Usage: python ahl_xgf_sql_scrape.py <latest game ID>
+Usage: python ahl_xg_sql_scrape.py <latest game ID>
 
 V2 is updated to populate the ahlxgfv2 postgresql database with the shot data, shooter name, goalie name.
 
