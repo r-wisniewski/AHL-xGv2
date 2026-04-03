@@ -1,5 +1,5 @@
 """
-Usage: python ahl_xg_accuray_v2.py <latest game ID>
+Usage: python ahl_xg_accuracy.py <latest game ID>
 
 Compare the results of the xG calculation to the actual game scores
 """
