@@ -33,7 +33,7 @@ def calculate_xg_logreg(x, y, strength, all_strength_data, params, poly_degree):
 
     Args:
         x, y:              Target coordinates (int/float)
-        strength:          Game strength index (-2 to 2)
+        strength:          Game strength (3v5 to 5v3) string
         all_strength_data: DataFrame with ALL shots for this strength
                            Required columns: ['XLocation', 'YLocation', 'Goal']
         poly_degree:       Degree for PolynomialFeatures expansion.
@@ -99,15 +99,23 @@ def load_checkpoint():
             return json.load(f)
     return {"row_index": 0} #default
 
-def save_checkpoint(row_index, strength):
+def save_checkpoint(row_index):
     """Save current progress to checkpoint file"""
     with open(CHECKPOINT_FILE, 'w') as f:
         json.dump({"row_index": row_index}, f)
 
+def gameint_to_string(st:int) -> str:
+    match st:
+        case -2 : return "3v5"
+        case -1 : return "4v5"
+        case 0 : return "Even"
+        case 1 : return "5v4"
+        case 2 : return "5v3"
+
 if __name__ == "__main__":
 
         # CONNECT TO POSTGRES DB #
-        connection, cursor = SQLDBconnect.connect(user = <insert username>,
+        connection = psycopg2.connect(user = <insert username>,
                                     password = <insert password>,
                                     host = <insert sql server addr>,
                                     port = <insert sql server port number>,
@@ -132,6 +140,7 @@ if __name__ == "__main__":
         # Pre-load all shots by strength and fit logistic regression models
         all_shots_by_strength = {}
         for strength_idx in range(-2,3): #strengths -2 to 2
+            strength_idx = gameint_to_string(strength_idx)
             cursor.execute(strength_query, (strength_idx,))
             matching_records = cursor.fetchall()
             df = pd.DataFrame(matching_records, columns=['XLocation', 'YLocation', 'Goal'])
@@ -149,6 +158,7 @@ if __name__ == "__main__":
             x, y = int(row[0]), int(row[1]) #grab the x,y coords
 
             for i in range(-2, 3): #-2 to 2 are the strengths
+                i = gameint_to_string(i)
                 # Use pre-loaded shots for this strength
                 df = all_shots_by_strength[i]
 
@@ -162,12 +172,12 @@ if __name__ == "__main__":
                 if xG != 0.0:
                     updates.append((xG, x, y, i))  # Only append where xG != 0.0
 
-                if x % 10 == 0 and y == 150 and i == 0 and x > 0:  # Commit every 10 x's
+                if x % 10 == 0 and y == 150 and i == "Even" and x > 0:  # Commit every 10 x's
                     cursor.executemany(update_query, updates)
                     connection.commit()
                     updates = []
                     # Save checkpoint after each write to the DB
-                    save_checkpoint(row_idx, i)
+                    save_checkpoint(row_idx)
                     print("Commit Successful")
 
         if updates:  # Finish writing any "left over" data

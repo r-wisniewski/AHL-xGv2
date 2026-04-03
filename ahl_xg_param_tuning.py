@@ -6,7 +6,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
-import SQLDBconnect, json, os
+import SQLDBconnect, json
 import pandas as pd
 from pathlib import Path
 
@@ -18,14 +18,22 @@ def save_params(params, poly_degree, strength):
         entry = {"strength": strength, "params": params, "polydegree": poly_degree}
         f.write(json.dumps(entry) + '\n')
 
+def gameint_to_string(st:int) -> str:
+    match st:
+        case -2 : return "3v5"
+        case -1 : return "4v5"
+        case 0 : return "Even"
+        case 1 : return "5v4"
+        case 2 : return "5v3"
+
 if __name__ == "__main__":
 
     # CONNECT TO POSTGRES DB #
-    connection, cursor = SQLDBconnect.connect(user = <insert username>,
-                                    password = <insert password>,
-                                    host = <insert sql server addr>,
-                                    port = <insert sql server port number>,
-                                    database = <insert database name>)
+    connection = psycopg2.connect(user = <insert username>,
+                                password = <insert password>,
+                                host = <insert sql server addr>,
+                                port = <insert sql server port number>,
+                                database = <insert database name>)
 
     Path(PARAMS_FILE).unlink(missing_ok=True) #remove file if it exists
 
@@ -58,6 +66,7 @@ if __name__ == "__main__":
     # Load all shots by strength and fit logistic regression models
     all_shots_by_strength = {}
     for strength_idx in range(-2, 3):  # strengths -2 to 2
+        strength_idx = gameint_to_string(strength_idx)
         cursor.execute(strength_query, (strength_idx,))
         matching_records = cursor.fetchall()
         df = pd.DataFrame(matching_records, columns=['XLocation', 'YLocation', 'Goal'])
@@ -67,6 +76,7 @@ if __name__ == "__main__":
     # Run GridSearchCV for each strength
     best_params_by_strength = {}
     for strength_idx in range(-2, 3):
+        strength_idx = gameint_to_string(strength_idx)
         df = all_shots_by_strength[strength_idx]
 
         if df.empty:
