@@ -1,5 +1,5 @@
 """
-Usage: python ahl_xgf_sql_smoothing_v5_regression.py
+Usage: python ahl_xg_regression.py
 Take the ahlxgf database & table. Find the shots that are in the vicinity of
 the datapoint. Use logistic regression to find the xG for each strength. Update the
 same ahlxgf table rather than making new tables for each strength.
