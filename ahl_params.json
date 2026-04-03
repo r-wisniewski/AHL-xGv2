@@ -1,0 +1,5 @@
+{"strength": "3v5", "params": {"logreg__C": 0.1, "logreg__l1_ratio": 0.0, "logreg__solver": "liblinear"}, "polydegree": 2}
+{"strength": "4v5", "params": {"logreg__C": 0.5, "logreg__l1_ratio": 0.0, "logreg__solver": "liblinear"}, "polydegree": 2}
+{"strength": "Even", "params": {"logreg__C": 10.0, "logreg__l1_ratio": 0.0, "logreg__solver": "liblinear"}, "polydegree": 2}
+{"strength": "5v4", "params": {"logreg__C": 3.0, "logreg__l1_ratio": 0.0, "logreg__solver": "liblinear"}, "polydegree": 2}
+{"strength": "5v3", "params": {"logreg__C": 0.3, "logreg__l1_ratio": 0.0, "logreg__solver": "liblinear"}, "polydegree": 2}
