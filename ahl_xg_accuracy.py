@@ -449,15 +449,6 @@ if __name__ == "__main__":
     bar.close()
     log.info("Scrape complete")
     
-    # Cleanup
-    try:
-        sql_delete_query = "DELETE FROM ahlxgaccuracyv2 WHERE Goal IS NULL"
-        cursor.execute(sql_delete_query)
-        connection.commit()
-        log.info("Cleaned up NULL entries")
-    except Exception as error:
-        log.error(f"Error during cleanup: {error}")
-    
     # Close connection
     cursor.close()
     connection.close()
